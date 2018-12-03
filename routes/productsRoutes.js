@@ -1,7 +1,7 @@
 const express = require('express')
 const routes = express.Router()
 const connection = require('../database/database.js')
-var product = require('../model/Products').Product
+var product = require('../model/Products')
 
 const httpStatus = {
     statusOK: " Produto cadastrado com sucesso",
@@ -64,11 +64,12 @@ connection.then((connection) => {
     routes.post('/products', async (req, res) => {
 
         try {
-            product = req.body
+           var productHelper = new product()
+           productHelper = req.body
             await connection.createQueryBuilder()
                 .insert()
                 .into("Product")
-                .values(product)
+                .values(productHelper)
                 .execute();
             res.status(200).send(httpStatus.statusOK)
 
@@ -82,7 +83,7 @@ connection.then((connection) => {
         try {
             const resultProduct = await productRepo.createQueryBuilder()
                 .select("product")
-                .from(product, "product")
+                .from("Product", "product")
                 .where("product.product_code = :code", { code: req.params.code })
                 .getOne();
             if (resultProduct) {
@@ -98,12 +99,13 @@ connection.then((connection) => {
 
     routes.patch('/products/:code', async (req, res) => {
 
-        product = req.body
+        productPatch = new product ()
+        productPatch = req.body
         try {
             await connection
                 .createQueryBuilder()
                 .update("Product")
-                .set(product)
+                .set(productPatch)
                 .where("product_code = :code", { code: req.params.code })
                 .execute();
             res.status(200).send(httpStatus.statusUpOk)

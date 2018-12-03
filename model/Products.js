@@ -8,6 +8,4 @@ class Product {
     }
 }
 
-module.exports = {
-    Product: Product
-};
+module.exports = Product
